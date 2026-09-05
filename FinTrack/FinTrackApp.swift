@@ -9,9 +9,10 @@ import SwiftUI
 
 @main
 struct FinTrackApp: App {
+    let container = AppContainer()
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            container.makeLoginView()
         }
     }
 }
