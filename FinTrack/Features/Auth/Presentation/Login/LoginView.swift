@@ -56,7 +56,7 @@ struct LoginView: View {
             }.padding(16).frame(maxWidth: .infinity, maxHeight: .infinity)
             
             .navigationDestination(isPresented: $viewModel.state.isLoggedIn){
-                HomeView()
+                MainTabView().navigationBarBackButtonHidden()
             }
         }
     }

@@ -5,8 +5,15 @@
 //  Created by Rizwan N Sayyednavar on 05/09/26.
 //
 import SwiftUI
+import Charts
+
 struct HomeView : View
 {
+    @State private var viewModel : HomeViewModel
+    init(viewModel: HomeViewModel){
+        self.viewModel = viewModel
+    }
+    
     var body: some View
     {
         ZStack(alignment: .top){
@@ -23,10 +30,18 @@ struct HomeView : View
             )
             .ignoresSafeArea(edges: .top)
             VStack(spacing: 20,){
-                Header()
-                BalanceCard()
-                QucikActions()
-                SpendingOverView()
+                
+                if viewModel.state.isLoading{
+                    ProgressView()
+                }else if let dasboard = viewModel.state.dashboard{
+                    Header(userName : dasboard.name)
+                    BalanceCard(balance: dasboard.balance)
+                    ScrollView{
+                        QucikActions()
+                        SpendingOverView(overviews: dasboard.spendingOverview)
+                        RecentTransactions(transactions: dasboard.transactions)
+                    }
+                }
             }.padding(16)
         }.frame(maxWidth: .infinity,maxHeight: .infinity, alignment: .top).background(Color.gray.opacity(0.2))
     }
@@ -34,6 +49,7 @@ struct HomeView : View
 
 
 struct Header : View{
+    let userName : String
     var body : some View{
         HStack()
         {
@@ -52,13 +68,14 @@ struct Header : View{
 }
 
 struct BalanceCard : View{
+    let balance : Balance
     var body : some View{
         HStack{
             VStack(alignment : .leading){
                 Text("Total Balance")
                 .font(.title2)
                     .foregroundColor(.black)
-                Text("$1,000.00")
+                Text("\(balance.total)")
                     .font(.title)
                     .fontWeight(.bold)
                     .foregroundColor(.black)
@@ -67,7 +84,7 @@ struct BalanceCard : View{
             VStack{
                 HStack{
                     Image(systemName: "arrow.up").font(Font.system(size: 20, weight: .bold)).foregroundColor(.green)
-                    Text("12.5%")
+                    Text("\(balance.percentagechange) %")
                         .font(.title3)
                         .foregroundColor(.black)
                 }
@@ -75,7 +92,9 @@ struct BalanceCard : View{
                     .font(.title3)
                     .foregroundColor(.black)
             }
-        }.padding(24).frame(maxWidth: .infinity).background(Color(.white)).clipShape(RoundedRectangle(cornerRadius: 16))
+        }.padding(24)
+            .fixedSize(horizontal: false, vertical: true)
+            .background(.white).shadow(radius: 4,y: 2).clipShape(RoundedRectangle(cornerRadius: 16))
     }
 }
 
@@ -97,12 +116,18 @@ struct QucikActions : View{
         ScrollView(.horizontal, showsIndicators: false){
             LazyHStack(alignment: .top,spacing: 8){
                 ForEach(items,id: \.self) { item in
-                    QuicAction(title: item.title, icon: item.icon).frame(width: 80)
+                    NavigationLink{
+                        ExampleView()
+                    }label: {
+                        QuicAction(title: item.title, icon: item.icon).frame(width: 80)
+                    }
+                    
+                   
                 }
             }
         }.padding(24)
             .fixedSize(horizontal: false, vertical: true)
-            .background(.white).clipShape(RoundedRectangle(cornerRadius: 16)).shadow(radius: 4,y: 2)
+            .background(.white).shadow(radius: 4,y: 2).clipShape(RoundedRectangle(cornerRadius: 16))
     }
 }
 
@@ -122,22 +147,8 @@ struct QuicAction : View {
     }
 }
 
-struct SpendingOverViewModel : Identifiable{
-    var id : String
-    var title : String
-    var value : String
-    var color : Color
-}
-
 struct SpendingOverView : View{
-    var overviews : [SpendingOverViewModel] = [
-        SpendingOverViewModel(id: "1", title: "Income", value: "28%", color: .green),
-        SpendingOverViewModel(id: "2", title: "Expenses", value: "50%", color: .red),
-        SpendingOverViewModel(id: "1", title: "Income", value: "28%", color: .green),
-        SpendingOverViewModel(id: "2", title: "Expenses", value: "50%", color: .red),
-        SpendingOverViewModel(id: "1", title: "Income", value: "28%", color: .green),
-        SpendingOverViewModel(id: "2", title: "Expenses", value: "50%", color: .red),
-    ]
+    let overviews : [SpendingOverview]
     var body : some View{
         VStack{
             HStack
@@ -155,29 +166,100 @@ struct SpendingOverView : View{
             }
             
             HStack{
-                Text("").frame(maxWidth: .infinity)
+                
+                ZStack{
+                    Chart(overviews){ overview in
+                        SectorMark(
+                            angle : .value(overview.title,overview.amount),
+                            innerRadius: .ratio(0.6)
+                            
+                        ).foregroundStyle(Color(hex: overview.color))
+                    }.frame(width: 130,height : 130)
+                    VStack{
+                        Text("$ 56420")
+                            .font(.caption)
+                        Text("Total")
+                            .font(.caption)
+                    }
+                }
                 Spacer()
-                VStack{
-                    ForEach(overviews) { overview in
-                        HStack{
-                            Circle().fill(overview.color).frame(width: 10, height: 10)
+                VStack {
+                    ForEach(overviews, id: \.id) { overview in
+
+                        HStack {
+
+                            Circle()
+                                .fill(Color(hex: overview.color))
+                                .frame(width: 10, height: 10)
+
                             Text(overview.title)
                                 .font(.caption)
+
                             Spacer()
-                            Text(overview.value)
+
+                            Text("\(overview.amount, specifier: "%.0f")%")
                                 .font(.caption)
                         }
                     }
-                    
-                }.frame(maxWidth: .infinity)
+                }
+                .frame(maxWidth: .infinity)
             }
             
             
         }.padding(24)
             .fixedSize(horizontal: false, vertical: true)
-            .background(.white).clipShape(RoundedRectangle(cornerRadius: 16)).shadow(radius: 4,y: 2)
+            .background(.white).shadow(radius: 4,y: 2).clipShape(RoundedRectangle(cornerRadius: 16))
     }
 }
-#Preview {
-    HomeView()
+
+
+struct RecentTransactions : View {
+    let transactions : [Transaction]
+    var body : some View{
+        VStack{
+            HStack
+            {
+                Text("Recent Transactions")
+                    .font(.title3).bold()
+                Spacer()
+                Text("See All").font(.caption).foregroundStyle(Color.blue)
+            }
+            
+            ForEach(transactions) { transaction in
+                TransactionView(transaction: transaction)
+            }
+            
+        }.padding(24)
+            .fixedSize(horizontal: false, vertical: true)
+            .background(.white).clipShape(RoundedRectangle(cornerRadius: 16)).shadow(radius: 4,y: 2)
+        
+    }
 }
+
+struct TransactionView : View {
+    var transaction : Transaction
+    var body : some View{
+        HStack{
+            VStack(alignment: .leading){
+                Text(transaction.category).font(.caption).bold()
+                Text(transaction.merchant).font(.caption)
+            }
+            Spacer()
+            Text("$\(transaction.amount, specifier: "%.2f")").font(.caption).foregroundStyle(Color.red)
+        }.padding(.vertical,5)
+    }
+}
+
+
+
+
+struct ExampleView : View {
+    var body: some View {
+        Text("Hello, world!")
+    }
+}
+
+
+//#Preview {
+//    HomeView()
+//}

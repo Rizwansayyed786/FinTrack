@@ -18,4 +18,11 @@ struct AppContainer {
             networkclient: networlClient
         )
     }
+    
+    func makeHomeView() -> HomeView {
+            HomeFactory.makeHomeView(
+                networkClient: networlClient
+            )
+        }
+    
 }

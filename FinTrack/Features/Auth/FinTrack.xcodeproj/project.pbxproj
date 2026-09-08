@@ -7,10 +7,7 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		7707570F30506C2C007B285C /* FinTrack.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = FinTrack.xcodeproj; sourceTree = "<group>"; };
 		7779ACFB304B3DB600DE729C /* FinTrack.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FinTrack.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		77AD85ED304F203D0084C29C /* FinTrack.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = FinTrack.xcodeproj; sourceTree = "<group>"; };
-		77B9290B304C86E200827128 /* FinTrack.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FinTrack.xcodeproj; path = FinTrack/Features/Auth/FinTrack.xcodeproj; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -32,33 +29,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		7707573030506C2C007B285C /* Products */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		7768B4703043498B006B78E3 = {
 			isa = PBXGroup;
 			children = (
 				7768B47B3043498B006B78E3 /* FinTrack */,
 				7779ACFB304B3DB600DE729C /* FinTrack.app */,
 			);
-			sourceTree = "<group>";
-		};
-		77AD85FA304F203D0084C29C /* Products */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		77B9290E304C86E200827128 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -113,20 +89,6 @@
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7768B4703043498B006B78E3;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 77AD85FA304F203D0084C29C /* Products */;
-					ProjectRef = 77AD85ED304F203D0084C29C /* FinTrack.xcodeproj */;
-				},
-				{
-					ProductGroup = 77B9290E304C86E200827128 /* Products */;
-					ProjectRef = 77B9290B304C86E200827128 /* FinTrack.xcodeproj */;
-				},
-				{
-					ProductGroup = 7707573030506C2C007B285C /* Products */;
-					ProjectRef = 7707570F30506C2C007B285C /* FinTrack.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				7768B4783043498B006B78E3 /* FinTrack */,
