@@ -12,42 +12,46 @@ struct HomeAPI {
     }
     
     func getDashBoardData() async throws -> Dashboard {
+        
+        try await Task.sleep(for : .seconds(3))
         let json = """
                 {
                     "success": true,
                     "message": "Dashboard fetched successfully",
                     "data": {
-                        "userName": "Rizwan",
+                        "user": "Rizwan",
                         "balance": {
                             "total": 1000.00,
-                            "changePercentage": 12.5
+                            "percentagechange": 12.5
                         },
                         "spendingOverview": [
                             {
-                                "id": "1"
-                                "title": "Income",
-                                "value": 0.28,
-                                "color": "green"
-                            },
-                            {
-                                "id":"2"
-                                "title": "Expenses",
-                                "value": 0.10,
-                                "color": "red"
-                            }
-                        ],
-                        "recentTransactions": [
-                            {
                                 "id": "1",
-                                "title": "Grocery",
-                                "amount": -50.00,
-                                "date": "2026-09-07"
+                                "title": "Income",
+                                "amount": 28,
+                                "color": "#16C784"
                             },
                             {
                                 "id": "2",
-                                "title": "Salary",
-                                "amount": 2000.00,
-                                "date": "2026-09-06"
+                                "title": "Expenses",
+                                "amount": 10,
+                                "color": "#EF4444"
+                            }
+                        ],
+                        "transactions": [
+                            {
+                                "id": "1",
+                                "amount": -50,
+                                "date": "2026-09-07",
+                                "merchant": "Big Bazaar",
+                                "category": "Grocery"
+                            },
+                            {
+                                "id": "2",
+                                "amount": 2000,
+                                "date": "2026-09-06",
+                                "merchant": "Acme Corp",
+                                "category": "Salary"
                             }
                         ]
                     }

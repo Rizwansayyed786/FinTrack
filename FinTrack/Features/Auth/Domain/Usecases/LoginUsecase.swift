@@ -15,7 +15,7 @@ struct LoginUsecases {
     func execute(
         email : String,
         password : String
-    ) async throws -> User{
+    ) async throws -> AuthenticatedUser{
         return try await repository.login(email: email, password: password)
     }
 }

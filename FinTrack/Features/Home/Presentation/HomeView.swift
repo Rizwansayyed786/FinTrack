@@ -32,7 +32,11 @@ struct HomeView : View
             VStack(spacing: 20,){
                 
                 if viewModel.state.isLoading{
-                    ProgressView()
+                    ProgressView().foregroundColor(Color.black).frame(maxWidth: .infinity,maxHeight: .infinity, alignment: .center)
+                }else if let error = viewModel.state.error{
+                    Text(error)
+                        .foregroundStyle(.red)
+                        .multilineTextAlignment(.center)
                 }else if let dasboard = viewModel.state.dashboard{
                     Header(userName : dasboard.name)
                     BalanceCard(balance: dasboard.balance)
@@ -44,6 +48,15 @@ struct HomeView : View
                 }
             }.padding(16)
         }.frame(maxWidth: .infinity,maxHeight: .infinity, alignment: .top).background(Color.gray.opacity(0.2))
+        .task {
+            await viewModel.fetchData()
+        }
+        .navigationDestination(for: HomeRoute.self) { route in
+            switch route {
+            case .quickAction(let item):
+                ExampleView().navigationTitle(item.title)
+            }
+        }
     }
 }
 
@@ -75,7 +88,7 @@ struct BalanceCard : View{
                 Text("Total Balance")
                 .font(.title2)
                     .foregroundColor(.black)
-                Text("\(balance.total)")
+                Text("$\(balance.total, specifier: "%.2f")")
                     .font(.title)
                     .fontWeight(.bold)
                     .foregroundColor(.black)
@@ -84,7 +97,7 @@ struct BalanceCard : View{
             VStack{
                 HStack{
                     Image(systemName: "arrow.up").font(Font.system(size: 20, weight: .bold)).foregroundColor(.green)
-                    Text("\(balance.percentagechange) %")
+                    Text("\(balance.percentagechange, specifier: "%.1f") %")
                         .font(.title3)
                         .foregroundColor(.black)
                 }
@@ -116,13 +129,9 @@ struct QucikActions : View{
         ScrollView(.horizontal, showsIndicators: false){
             LazyHStack(alignment: .top,spacing: 8){
                 ForEach(items,id: \.self) { item in
-                    NavigationLink{
-                        ExampleView()
-                    }label: {
+                    NavigationLink(value: HomeRoute.quickAction(item)){
                         QuicAction(title: item.title, icon: item.icon).frame(width: 80)
                     }
-                    
-                   
                 }
             }
         }.padding(24)
@@ -231,7 +240,7 @@ struct RecentTransactions : View {
             
         }.padding(24)
             .fixedSize(horizontal: false, vertical: true)
-            .background(.white).clipShape(RoundedRectangle(cornerRadius: 16)).shadow(radius: 4,y: 2)
+            .background(.white).shadow(radius: 4,y: 2).clipShape(RoundedRectangle(cornerRadius: 16))
         
     }
 }
@@ -245,7 +254,7 @@ struct TransactionView : View {
                 Text(transaction.merchant).font(.caption)
             }
             Spacer()
-            Text("$\(transaction.amount, specifier: "%.2f")").font(.caption).foregroundStyle(Color.red)
+            Text("$\(transaction.amount)").font(.caption).foregroundStyle(Color.red)
         }.padding(.vertical,5)
     }
 }

@@ -13,7 +13,7 @@ struct TranasactionDTO : Decodable{
 }
 
 extension TranasactionDTO{
-    func toEntity() -> TransactionSpending{
-        return TransactionSpending(id: id, amount: amount, date: date, merchant: merchant, category: category)
+    func toEntity() -> Transaction{
+        return Transaction(id: id, amount: amount, date: date, merchant: merchant, category: category)
     }
 }

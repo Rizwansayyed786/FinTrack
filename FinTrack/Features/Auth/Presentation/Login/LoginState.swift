@@ -12,8 +12,5 @@ struct LoginState {
     var email : String = ""
     var password : String = ""
     var isLoading : Bool = false
-    var isLoggedIn : Bool = false
     var errorMessage : String?
 }
-
-

@@ -12,7 +12,7 @@ class AuthRepoImpl : AuthRepository {
         self.api = api
     }
     
-    func login(email: String, password: String) async throws -> User {
+    func login(email: String, password: String) async throws -> AuthenticatedUser {
        let response = try await api.login(email: email, password: password)
     return response
     }

@@ -12,15 +12,18 @@ struct AuthAPI {
         self.client = client
     }
     
-    func login(email: String, password: String) async throws -> User {
+    func login(email: String, password: String) async throws -> AuthenticatedUser {
         let json = """
         {
             "success": true,
             "message": "Login successful",
             "data": {
-                "id": 123,
-                "name": "Rizwan",
-                "email": "rizwan@example.com"
+                "token": "mock-access-token",
+                "user": {
+                    "id": 123,
+                    "name": "Rizwan",
+                    "email": "rizwan@example.com"
+                }
             }
         }
         """
@@ -28,7 +31,7 @@ struct AuthAPI {
         let data = Data(json.utf8)
         
         let response = try JSONDecoder().decode(
-            APIResponseWrapper<UserModel>.self,
+            APIResponseWrapper<LoginResponseDTO>.self,
             from: data
         )
         
@@ -36,10 +39,10 @@ struct AuthAPI {
             throw APIError.server(response.message)
         }
         
-        guard let user = response.data else {
+        guard let loginData = response.data else {
             throw APIError.invalidResponse
         }
         
-        return user.toEntity()
+        return loginData.toEntity()
     }
 }

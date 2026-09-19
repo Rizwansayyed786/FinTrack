@@ -12,9 +12,11 @@ final class LoginViewModel  {
     var state = LoginState()
     
     private let useCase : LoginUsecases
+    private let session : AuthSession
     
-    init(loginUseCase : LoginUsecases){
+    init(loginUseCase : LoginUsecases, session : AuthSession){
         self.useCase = loginUseCase
+        self.session = session
     }
     
     func login() async {
@@ -22,9 +24,11 @@ final class LoginViewModel  {
         state.errorMessage = nil
         
         do{
-            let user = try await useCase.execute(email: state.email, password: state.password)
-            self.state.isLoggedIn = true
-            print("Login Succecfull as \(user.email)")
+            let result = try await useCase.execute(email: state.email, password: state.password)
+            // Persisting the token flips `session.isAuthenticated`, which is what
+            // swaps `RootView` over to the tab shell.
+            session.login(token: result.token)
+            print("Login Succecfull as \(result.user.email)")
         }catch{
             self.state.errorMessage = error.localizedDescription
             print("Error Occured")

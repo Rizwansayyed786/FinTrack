@@ -12,7 +12,7 @@ struct FinTrackApp: App {
     let container = AppContainer()
     var body: some Scene {
         WindowGroup {
-            container.makeLoginView()
+            container.makeRootView()
         }
     }
 }

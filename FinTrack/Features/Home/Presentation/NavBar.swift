@@ -1,40 +1,74 @@
-//
-//  NavBar.swift
-//  FinTrack
-//
-//  Created by Rizwan N Sayyednavar on 05/09/26.
-//
-
 import SwiftUI
 struct MainTabView: View {
 
+    let homeView: HomeView
+    let session: AuthSession
+
+    @Environment(NavigationManager.self) private var navigation
+
     var body: some View {
-        TabView {
-            NavigationStack {
-                AppContainer().makeHomeView()
-                    .tabItem {
-                        Image(systemName: "house.fill")
-                        Text("Home")
-                    }
+        @Bindable var navigation = navigation
+
+        TabView(selection: $navigation.selectedTab) {
+
+            NavigationStack(path: $navigation.homePath) {
+                homeView
             }
-            Text("Settings")
+            .tabItem {
+                Image(systemName: "house.fill")
+                Text("Home")
+            }
+            .tag(NavigationManager.Tab.home)
+
+            NavigationStack(path: $navigation.settingsPath) {
+                SettingsView(session: session)
+            }
                 .tabItem {
                     Image(systemName: "gear")
                     Text("Settings")
                 }
+                .tag(NavigationManager.Tab.settings)
 
-            Text("Reports")
+            NavigationStack(path: $navigation.reportsPath) {
+                Text("Reports")
+            }
                 .tabItem {
                     Image(systemName: "chart.pie.fill")
                     Text("Reports")
                 }
+                .tag(NavigationManager.Tab.reports)
 
-            Text("Profile")
+            NavigationStack(path: $navigation.profilePath) {
+                ProfileView()
+            }
                 .tabItem {
                     Image(systemName: "person.fill")
                     Text("Profile")
                 }
+                .tag(NavigationManager.Tab.profile)
         }
     }
 }
 
+/// Placeholder Settings tab. Exists mainly to host logout, which clears the
+/// Keychain token and drops `RootView` back to the login screen.
+struct SettingsView: View {
+
+    let session: AuthSession
+
+    @Environment(NavigationManager.self) private var navigation
+
+    var body: some View {
+        List {
+            Section {
+                Button("Log Out", role: .destructive) {
+                    session.logout()
+                    // Stacks live in the container and outlive the tab shell, so
+                    // clear them or the next sign-in resumes mid-navigation.
+                    navigation.reset()
+                }
+            }
+        }
+        .navigationTitle("Settings")
+    }
+}

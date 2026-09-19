@@ -7,15 +7,15 @@
 import Foundation
 
 struct AuthFactory{
-     static func makeLoginView(networkclient : NetworkClient) -> LoginView {
+     static func makeRootView(networkclient : NetworkClient, session : AuthSession, container : AppContainer) -> RootView {
         let authAPI = AuthAPI(client: networkclient)
         
         let repository = AuthRepoImpl(api : authAPI)
         
         let useCase = LoginUsecases(userRepository : repository)
         
-        let viewModel = LoginViewModel(loginUseCase : useCase)
+        let viewModel = LoginViewModel(loginUseCase : useCase, session : session)
         
-        return LoginView(viewModel: viewModel)
+        return RootView(viewModel: viewModel, session: session, container: container)
     }
 }
