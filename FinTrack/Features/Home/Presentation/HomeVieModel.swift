@@ -17,6 +17,11 @@ final class HomeViewModel {
     }
     
     func fetchData() async {
+        // Already loaded → don't fetch again
+        if state.dashboard != nil {
+            return
+        }
+        
         state.isLoading = true
         state.error = nil
         

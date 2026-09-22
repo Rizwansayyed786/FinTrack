@@ -17,7 +17,16 @@ struct ProfileView : View {
                 ProfileItems()
                 Spacer()
                 LogoutButton()
-            }.frame(maxWidth: .infinity,maxHeight: .infinity,alignment: .top).background(.white).clipShape(RoundedRectangle(cornerRadius: 16))
+            }.frame(maxWidth: .infinity,maxHeight: .infinity,).background {
+                UnevenRoundedRectangle(
+                    topLeadingRadius: 16,
+                    bottomLeadingRadius: 0,
+                    bottomTrailingRadius: 0,
+                    topTrailingRadius: 16
+                )
+                .fill(.white)
+                .ignoresSafeArea(edges: .bottom)
+            }
             
         }.frame(maxWidth: .infinity, maxHeight: .infinity,alignment: .top)
             .background(Color( hex: "0D182A"))

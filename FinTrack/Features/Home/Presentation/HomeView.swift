@@ -50,11 +50,23 @@ struct HomeView : View
         }.frame(maxWidth: .infinity,maxHeight: .infinity, alignment: .top).background(Color.gray.opacity(0.2))
         .task {
             await viewModel.fetchData()
+        }.onAppear {
+            print("🏠 HOME APPEAR")
+        }
+        .onDisappear {
+            print("🏠 HOME DISAPPEAR")
         }
         .navigationDestination(for: HomeRoute.self) { route in
             switch route {
-            case .quickAction(let item):
-                ExampleView().navigationTitle(item.title)
+                case .quickAction(let item):
+                if item.id == "1"{
+                    AddTransaction().navigationTitle(item.title).toolbar(.hidden,for:.tabBar)
+                } else if item.id == "3"{
+                    CategoriesView().navigationTitle(item.title).toolbar(.hidden,for:.tabBar)
+                } else{
+                    ExampleView().navigationTitle(item.title).toolbar(.hidden,for:.tabBar)
+
+                }
             }
         }
     }
@@ -111,19 +123,20 @@ struct BalanceCard : View{
     }
 }
 
-struct QuickActionItem : Hashable{
+struct QuickActionItem : Hashable {
+    let id : String
     let title : String
     let icon : String
 }
 
 struct QucikActions : View{
     var items : [QuickActionItem] = [
-        QuickActionItem(title: "Add Transaction", icon: "plus"),
-        QuickActionItem(title: "Send Money", icon: "paperplane.fill"),
-        QuickActionItem(title: "Categories", icon: "contextualmenu.and.cursorarrow"),
-        QuickActionItem(title: "Reports", icon: "receipt"),
-        QuickActionItem(title: "Categories", icon: "plus"),
-        QuickActionItem(title: "Reports", icon: "plus"),
+        QuickActionItem(id: "1",title: "Add Transaction", icon: "plus"),
+        QuickActionItem(id: "2",title: "Send Money", icon: "paperplane.fill"),
+        QuickActionItem(id: "3",title: "Categories", icon: "contextualmenu.and.cursorarrow"),
+        QuickActionItem(id: "4",title: "Reports", icon: "receipt"),
+        QuickActionItem(id: "5",title: "Categories", icon: "plus"),
+        QuickActionItem(id: "1",title: "Reports", icon: "plus"),
     ]
     var body : some View{
         ScrollView(.horizontal, showsIndicators: false){
@@ -231,7 +244,10 @@ struct RecentTransactions : View {
                 Text("Recent Transactions")
                     .font(.title3).bold()
                 Spacer()
-                Text("See All").font(.caption).foregroundStyle(Color.blue)
+                NavigationLink(destination: TransactionList().navigationTitle("Transacitions")){
+                    Text("See All").font(.caption).foregroundStyle(Color.blue)
+
+                }
             }
             
             ForEach(transactions) { transaction in
